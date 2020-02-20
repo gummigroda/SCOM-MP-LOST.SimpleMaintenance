@@ -1,0 +1,109 @@
+﻿<ManagementPackFragment SchemaVersion="2.0" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <TypeDefinitions>
+    <SecureReferences>
+      <SecureReference ID="LOST.Delete.Disabled.Objects.RunAsProfile" Accessibility="Internal" Context="System!System.Entity" />
+    </SecureReferences>
+    <ModuleTypes>
+      <DataSourceModuleType ID="LOST.Delete.Disabled.Objects.Script.DataSource" Accessibility="Public" Batching="false">
+        <Configuration>
+          <IncludeSchemaTypes>
+            <SchemaType>System!System.ExpressionEvaluatorSchema</SchemaType>
+          </IncludeSchemaTypes>
+          <xsd:element name="IntervalSeconds" type="xsd:int" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+          <xsd:element name="SyncTime" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+        </Configuration>
+        <OverrideableParameters>
+          <OverrideableParameter ID="IntervalSeconds" Selector="$Config/IntervalSeconds$" ParameterType="int" />
+          <OverrideableParameter ID="SyncTime" Selector="$Config/SyncTime$" ParameterType="string" />
+        </OverrideableParameters>
+        <ModuleImplementation Isolation="Any">
+          <Composite>
+            <MemberModules>
+              <DataSource ID="DS" TypeID="System!System.Scheduler">
+                <Scheduler>
+                  <SimpleReccuringSchedule>
+                    <Interval Unit="Seconds">$Config/IntervalSeconds$</Interval>
+                    <SyncTime>$Config/SyncTime$</SyncTime>
+                  </SimpleReccuringSchedule>
+                  <ExcludeDates />
+                </Scheduler>
+              </DataSource>
+            </MemberModules>
+            <Composition>
+              <Node ID="DS" />
+            </Composition>
+          </Composite>
+        </ModuleImplementation>
+        <OutputType>System!System.TriggerData</OutputType>
+      </DataSourceModuleType>
+      <WriteActionModuleType ID="LOST.Delete.Disabled.Objects.Script.WriteAction" Accessibility="Internal" Batching="false">
+        <Configuration>
+          <xsd:element minOccurs="1" name="TimeoutSeconds" type="xsd:integer" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+        </Configuration>
+        <OverrideableParameters>
+          <OverrideableParameter ID="TimeoutSeconds" Selector="$Config/TimeoutSeconds$" ParameterType="int" />
+        </OverrideableParameters>
+        <ModuleImplementation Isolation="Any">
+          <Composite>
+            <MemberModules>
+              <WriteAction ID="PSWA" TypeID="Windows!Microsoft.Windows.PowerShellWriteAction">
+                <ScriptName>Unsealed.MP.Backup.ps1</ScriptName>
+                <ScriptBody>$IncludeFileContent/Scripts/Delete.Disabled.Objects.ps1$</ScriptBody>
+                <TimeoutSeconds>$Config/TimeoutSeconds$</TimeoutSeconds>
+              </WriteAction>
+            </MemberModules>
+            <Composition>
+              <Node ID="PSWA" />
+            </Composition>
+          </Composite>
+        </ModuleImplementation>
+        <OutputType>System!System.BaseData</OutputType>
+        <InputType>System!System.BaseData</InputType>
+      </WriteActionModuleType>
+    </ModuleTypes>
+  </TypeDefinitions>
+  <Monitoring>
+    <Rules>
+      <Rule ID="LOST.Delete.Disabled.Objects.Rule" Enabled="true" Target="SC!Microsoft.SystemCenter.AllManagementServersPool" ConfirmDelivery="true" Remotable="true" Priority="Normal" DiscardLevel="100">
+        <Category>Maintenance</Category>
+        <DataSources>
+          <DataSource ID="Scheduler" TypeID="LOST.Delete.Disabled.Objects.Script.DataSource">
+            <IntervalSeconds>86400</IntervalSeconds>
+            <SyncTime>01:00</SyncTime>
+          </DataSource>
+        </DataSources>
+        <WriteActions>
+          <WriteAction ID="WA" TypeID="LOST.Delete.Disabled.Objects.Script.WriteAction" RunAs="LOST.Delete.Disabled.Objects.RunAsProfile">
+            <TimeoutSeconds>600</TimeoutSeconds>
+          </WriteAction>
+        </WriteActions>
+      </Rule>
+    </Rules>
+  </Monitoring>
+  <LanguagePacks>
+    <LanguagePack ID="ENU" IsDefault="true">
+      <DisplayStrings>
+        <DisplayString ElementID="LOST.Delete.Disabled.Objects.Rule">
+          <Name>Delete Disabled Objects Maintenance Rule [LOST]</Name>
+          <Description>This rule runs a command to delete disabled objects in the SCOM database, equivalent to 'Remove-SCOMDisabledClassInstance'</Description>
+        </DisplayString>
+        <DisplayString ElementID="LOST.Delete.Disabled.Objects.RunAsProfile">
+          <Name>Delete Disabled Objects Maintenance RunAs Profile</Name>
+          <Description>RunAs Profile with SCOM Administrator access to the SDK used to run the command to delete disabled objects in the SCOM database.</Description>
+        </DisplayString>
+      </DisplayStrings>
+      <KnowledgeArticles>
+        <KnowledgeArticle ElementID="LOST.Delete.Disabled.Objects.Rule" Visible="true">
+          <MamlContent>
+            <maml:section xmlns:maml="http://schemas.microsoft.com/maml/2004/10">
+              <maml:title>Summary</maml:title>
+              <maml:para>
+                This rule runs the command 'Remove-SCOMDisabledClassInstance' to remove old disabled objects from the SCOM database.
+              </maml:para>
+            </maml:section>
+          </MamlContent>
+        </KnowledgeArticle>
+      </KnowledgeArticles>
+    </LanguagePack>
+  </LanguagePacks>
+</ManagementPackFragment>

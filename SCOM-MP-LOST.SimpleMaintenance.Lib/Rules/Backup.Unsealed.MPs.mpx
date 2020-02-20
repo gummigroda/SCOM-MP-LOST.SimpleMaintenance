@@ -1,0 +1,121 @@
+﻿<ManagementPackFragment SchemaVersion="2.0" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <!-- 
+  SNIPPED AND RIPPED FROM https://gallery.technet.microsoft.com/SCOM-2012-and-2016-2ccc45c0#content 
+  THANKS!
+  -->
+  <TypeDefinitions>
+    <SecureReferences>
+      <SecureReference ID="LOST.Unsealed.MP.Backup.RunAsProfile" Accessibility="Internal" Context="System!System.Entity" />
+    </SecureReferences>
+    <ModuleTypes>
+      <DataSourceModuleType ID="LOST.Unsealed.MP.Backup.Script.DataSource" Accessibility="Public" Batching="false">
+        <Configuration>
+          <IncludeSchemaTypes>
+            <SchemaType>System!System.ExpressionEvaluatorSchema</SchemaType>
+          </IncludeSchemaTypes>
+          <xsd:element name="IntervalSeconds" type="xsd:int" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+          <xsd:element name="SyncTime" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+        </Configuration>
+        <OverrideableParameters>
+          <OverrideableParameter ID="IntervalSeconds" Selector="$Config/IntervalSeconds$" ParameterType="int" />
+          <OverrideableParameter ID="SyncTime" Selector="$Config/SyncTime$" ParameterType="string" />
+        </OverrideableParameters>
+        <ModuleImplementation Isolation="Any">
+          <Composite>
+            <MemberModules>
+              <DataSource ID="DS" TypeID="System!System.Scheduler">
+                <Scheduler>
+                  <SimpleReccuringSchedule>
+                    <Interval Unit="Seconds">$Config/IntervalSeconds$</Interval>
+                    <SyncTime>$Config/SyncTime$</SyncTime>
+                  </SimpleReccuringSchedule>
+                  <ExcludeDates />
+                </Scheduler>
+              </DataSource>
+            </MemberModules>
+            <Composition>
+              <Node ID="DS" />
+            </Composition>
+          </Composite>
+        </ModuleImplementation>
+        <OutputType>System!System.TriggerData</OutputType>
+      </DataSourceModuleType>
+      <WriteActionModuleType ID="LOST.Unsealed.MP.Backup.Script.WriteAction" Accessibility="Internal" Batching="false">
+        <Configuration>
+          <xsd:element minOccurs="1" name="BackupPath" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+          <xsd:element minOccurs="1" name="DaysToKeep" type="xsd:integer" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+          <xsd:element minOccurs="1" name="TimeoutSeconds" type="xsd:integer" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+        </Configuration>
+        <OverrideableParameters>
+          <OverrideableParameter ID="BackupPath" Selector="$Config/BackupPath$" ParameterType="string" />
+          <OverrideableParameter ID="DaysToKeep" Selector="$Config/DaysToKeep$" ParameterType="int" />
+          <OverrideableParameter ID="TimeoutSeconds" Selector="$Config/TimeoutSeconds$" ParameterType="int" />
+        </OverrideableParameters>
+        <ModuleImplementation Isolation="Any">
+          <Composite>
+            <MemberModules>
+              <WriteAction ID="PSWA" TypeID="Windows!Microsoft.Windows.PowerShellWriteAction">
+                <ScriptName>Backup.Unsealed.MP.ps1</ScriptName>
+                <ScriptBody>$IncludeFileContent/Scripts/Backup.Unsealed.MP.ps1$</ScriptBody>
+                <Parameters>
+                  <Parameter>
+                    <Name>MGName</Name>
+                    <Value>$Target/ManagementGroup/Name$</Value>
+                  </Parameter>
+                  <Parameter>
+                    <Name>BackupPath</Name>
+                    <Value>$Config/BackupPath$</Value>
+                  </Parameter>
+                  <Parameter>
+                    <Name>DaysToKeep</Name>
+                    <Value>$Config/DaysToKeep$</Value>
+                  </Parameter>
+                </Parameters>
+                <TimeoutSeconds>$Config/TimeoutSeconds$</TimeoutSeconds>
+              </WriteAction>
+            </MemberModules>
+            <Composition>
+              <Node ID="PSWA" />
+            </Composition>
+          </Composite>
+        </ModuleImplementation>
+        <OutputType>System!System.BaseData</OutputType>
+        <InputType>System!System.BaseData</InputType>
+      </WriteActionModuleType>
+    </ModuleTypes>
+  </TypeDefinitions>
+  <Monitoring>
+    <Rules>
+      <Rule ID="LOST.Unsealed.MP.Backup.Rule" Enabled="true" Target="SC!Microsoft.SystemCenter.AllManagementServersPool" ConfirmDelivery="true" Remotable="true" Priority="Normal" DiscardLevel="100">
+        <Category>Maintenance</Category>
+        <DataSources>
+          <DataSource ID="Scheduler" TypeID="LOST.Unsealed.MP.Backup.Script.DataSource">
+            <IntervalSeconds>86400</IntervalSeconds>
+            <SyncTime>03:00</SyncTime>
+          </DataSource>
+        </DataSources>
+        <WriteActions>
+          <WriteAction ID="WA" TypeID="LOST.Unsealed.MP.Backup.Script.WriteAction" RunAs="LOST.Unsealed.MP.Backup.RunAsProfile">
+            <BackupPath>\\THESERVER\SHARE</BackupPath>
+            <DaysToKeep>120</DaysToKeep>
+            <TimeoutSeconds>300</TimeoutSeconds>
+          </WriteAction>
+        </WriteActions>
+      </Rule>
+    </Rules>
+  </Monitoring>
+  <LanguagePacks>
+    <LanguagePack ID="ENU" IsDefault="true">
+      <DisplayStrings>
+        <DisplayString ElementID="LOST.Unsealed.MP.Backup.Rule">
+          <Name>SCOM Unsealed MP Backup Rule [LOST]</Name>
+          <Description>This rule exports all the unsealed MPs once a day to a folder. The folder name is the Management Group and date of the backup. Backups older than the configured number of days will be deleted.</Description>
+        </DisplayString>
+        <DisplayString ElementID="LOST.Unsealed.MP.Backup.RunAsProfile">
+          <Name>SCOM Unsealed MP Backup RunAs Profile</Name>
+          <Description>RunAs Profile with SCOM Administrator access to the SDK used to run the MP Backup Powershell script which will backup MPs and have rights to the disk location to export them to.</Description>
+        </DisplayString>
+      </DisplayStrings>
+    </LanguagePack>
+  </LanguagePacks>
+</ManagementPackFragment>
