@@ -5,7 +5,7 @@
     <RootNamespace>LOST.SimpleMaintenance.Lib</RootNamespace>
     <Name>SimpleMaintenance Library</Name>
     <ManagementPackName>LOST.SimpleMaintenance.Lib</ManagementPackName>
-    <Version>1.0.0.0</Version>
+    <Version>1.0.1.0</Version>
     <MpFrameworkVersion>v7.0.3</MpFrameworkVersion>
     <MpFrameworkProfile>OM</MpFrameworkProfile>
     <ProductVersion>1.1.0.0</ProductVersion>
@@ -32,7 +32,7 @@
   <ItemGroup>
     <ManagementPackReference Include="Microsoft.SystemCenter.Library">
       <Alias>SC</Alias>
-      <PackageToBundle>false</PackageToBundle>
+      <PackageToBundle>False</PackageToBundle>
     </ManagementPackReference>
     <ManagementPackReference Include="Microsoft.Windows.Library">
       <Alias>Windows</Alias>
@@ -59,6 +59,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Rules\DeleteDisabledObjects.mpx">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Rules\Warning.On.Script.Errors.mpx">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>

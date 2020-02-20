@@ -116,6 +116,24 @@
           <Description>RunAs Profile with SCOM Administrator access to the SDK used to run the MP Backup Powershell script which will backup MPs and have rights to the disk location to export them to.</Description>
         </DisplayString>
       </DisplayStrings>
+      <KnowledgeArticles>
+        <KnowledgeArticle ElementID="LOST.Unsealed.MP.Backup.Rule" Visible="true">
+          <MamlContent>
+            <maml:section xmlns:maml="http://schemas.microsoft.com/maml/2004/10">
+              <maml:title>Summary</maml:title>
+              <maml:para>
+                This rule runs the command 'Get-SCOMManagementpack | Where-Object {$_.Sealed -eq $false} ' to backup unsealed management packs.
+              </maml:para>
+            </maml:section>
+            <maml:section xmlns:maml="http://schemas.microsoft.com/maml/2004/10">
+              <maml:title>Configuration</maml:title>
+            <maml:para>
+              This rule runs the command 'Get-SCOMManagementpack | Where-Object {$_.Sealed -eq $false} ' to backup unsealed management packs.
+            </maml:para>
+            </maml:section>
+          </MamlContent>
+        </KnowledgeArticle>
+      </KnowledgeArticles>
     </LanguagePack>
   </LanguagePacks>
 </ManagementPackFragment>
