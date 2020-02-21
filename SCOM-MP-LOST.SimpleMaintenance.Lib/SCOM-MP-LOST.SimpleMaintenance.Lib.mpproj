@@ -5,7 +5,7 @@
     <RootNamespace>LOST.SimpleMaintenance.Lib</RootNamespace>
     <Name>SimpleMaintenance Library</Name>
     <ManagementPackName>LOST.SimpleMaintenance.Lib</ManagementPackName>
-    <Version>1.0.1.0</Version>
+    <Version>1.0.1.1</Version>
     <MpFrameworkVersion>v7.0.3</MpFrameworkVersion>
     <MpFrameworkProfile>OM</MpFrameworkProfile>
     <ProductVersion>1.1.0.0</ProductVersion>

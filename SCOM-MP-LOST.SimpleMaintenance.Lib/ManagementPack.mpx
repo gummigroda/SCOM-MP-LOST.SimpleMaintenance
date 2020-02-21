@@ -4,7 +4,8 @@
       <DisplayStrings>
         <DisplayString ElementID="LOST.SimpleMaintenance.Lib">
           <Name>Simple Maintenance Management Pack [LOST]</Name>
-          <Description>A Simple MP with a cuple of nifty rules. https://github.com/gummigroda/SCOM-MP-LOST.SimpleMaintenance </Description>
+          <Description>A Simple MP with a cuple of nifty rules.
+https://github.com/gummigroda/SCOM-MP-LOST.SimpleMaintenance</Description>
         </DisplayString>
       </DisplayStrings>
     </LanguagePack>

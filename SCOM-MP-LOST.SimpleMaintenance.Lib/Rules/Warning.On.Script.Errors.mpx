@@ -32,6 +32,17 @@
                   </SimpleExpression>
                 </Expression>
                 <Expression>
+                  <SimpleExpression>
+                    <ValueExpression>
+                      <XPathQuery Type="Integer">EventLevel</XPathQuery>
+                    </ValueExpression>
+                    <Operator>Equal</Operator>
+                    <ValueExpression>
+                      <Value Type="Integer">1</Value>
+                    </ValueExpression>
+                  </SimpleExpression>
+                </Expression>
+                <Expression>
                   <Or>
                     <Expression>
                       <SimpleExpression>
@@ -103,7 +114,9 @@
         </DisplayString>
         <DisplayString ElementID="LOST.Simple.Maint.Warning.On.Script.Errors.Alert.Rule.AlertMessage">
           <Name>[LOST] Script Error - Simple Maintenance MP</Name>
-          <Description>{0}</Description>
+          <Description>Script Error Log:
+------------------------------------------------------------------
+{0}</Description>
         </DisplayString>
       </DisplayStrings>
     </LanguagePack>
