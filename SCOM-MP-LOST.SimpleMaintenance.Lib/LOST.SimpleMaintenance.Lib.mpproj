@@ -3,9 +3,9 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <ProjectGuid>{607f1952-ac38-4ebe-800a-bb1ef716433b}</ProjectGuid>
     <RootNamespace>LOST.SimpleMaintenance.Lib</RootNamespace>
-    <Name>SimpleMaintenance Library</Name>
+    <Name>LOST.SimpleMaintenance.Lib</Name>
     <ManagementPackName>LOST.SimpleMaintenance.Lib</ManagementPackName>
-    <Version>1.0.1.1</Version>
+    <Version>1.0.1.2</Version>
     <MpFrameworkVersion>v7.0.3</MpFrameworkVersion>
     <MpFrameworkProfile>OM</MpFrameworkProfile>
     <ProductVersion>1.1.0.0</ProductVersion>
